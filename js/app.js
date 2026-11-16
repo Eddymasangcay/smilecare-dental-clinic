@@ -207,7 +207,7 @@
     };
     state.patients.unshift(patient);
     persist();
-    setSessionId(id);
+    // Do not auto-login — user must sign in after registration
     return { ok: true, patient };
   }
 
@@ -926,7 +926,7 @@
         showToast(`Welcome back, ${user?.fullName?.split(" ")[0] || "patient"}`);
       } else {
         if (err) {
-          err.textContent = "Invalid username or password. Try a demo account below.";
+          err.textContent = "Invalid username or password. Please try again.";
           err.classList.remove("hidden");
         }
       }
@@ -935,6 +935,7 @@
     $("#register-form")?.addEventListener("submit", (e) => {
       e.preventDefault();
       const err = $("#register-error");
+      const username = $("#reg-username").value;
       const result = registerAccount({
         fullName: $("#reg-fullname").value,
         age: $("#reg-age").value,
@@ -942,13 +943,19 @@
         contact: $("#reg-contact").value,
         email: $("#reg-email").value,
         address: $("#reg-address").value,
-        username: $("#reg-username").value,
+        username,
         password: $("#reg-password").value,
       });
       if (result.ok) {
         err?.classList.add("hidden");
-        enterApp();
-        showToast("Account created — you're signed in");
+        $("#register-form").reset();
+        switchAuthTab("login");
+        if ($("#login-username")) {
+          $("#login-username").value = result.patient.username || sanitizeUsername(username);
+        }
+        if ($("#login-password")) $("#login-password").value = "";
+        $("#login-password")?.focus();
+        showToast("Account created — please sign in");
       } else if (err) {
         err.textContent = result.error;
         err.classList.remove("hidden");

@@ -1,12 +1,10 @@
 # Render Static Site blueprint for SmileCare Dental Clinic
 # https://render.com/docs/static-sites
+#
+# Important: In the Dashboard, create New → Static Site (not Web Service).
 services:
   - type: web
     name: smilecare-dental-clinic
     runtime: static
-    buildCommand: ""
-    staticPublishPath: .
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    buildCommand: "echo 'No build required'"
+    staticPublishPath: ./
